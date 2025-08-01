@@ -96,24 +96,24 @@ function Navbar() {
                   <DropdownMenuContent className="w-56" align="start">
                     <DropdownMenuLabel>My Account</DropdownMenuLabel>
                     <DropdownMenuGroup>
-                      <DropdownMenuItem>
+                      <DropdownMenuItem onClick={()=>navigate('/dashboard/profile')}>
                         <User/>
                         <span>Profile</span>
                         <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut>
                       </DropdownMenuItem>
-                      <DropdownMenuItem>
+                      <DropdownMenuItem onClick={()=>navigate('/dashboard/your-blog')}>
                         <ChartColumnBig/>
                         <span>Your Blogs</span>
                         <DropdownMenuShortcut>⌘B</DropdownMenuShortcut>
                       </DropdownMenuItem>
-                      <DropdownMenuItem>
+                      <DropdownMenuItem onClick={()=>navigate('/dashboard/comments')}>
                         <LiaCommentsSolid/>
                         <span>
                           Comments
                         </span>
                         <DropdownMenuShortcut>⌘B</DropdownMenuShortcut>
                       </DropdownMenuItem>
-                      <DropdownMenuItem>
+                      <DropdownMenuItem onClick={()=>navigate('/dashboard/write-blogs')}>
                         <FaRegEdit/>
                         <span>Write Blogs</span>
                         <DropdownMenuShortcut>⌘B</DropdownMenuShortcut>

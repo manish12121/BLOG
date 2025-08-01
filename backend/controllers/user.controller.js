@@ -1,6 +1,10 @@
 import { User } from "../models/user.model.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken"
+import getDataUri from "../utils/dataUri.js"
+import cloudinary from "../utils/cloudinary.js";
+import dotenv from "dotenv";
+dotenv.config();
 
 export const register = async(req, res) => {
     try {
@@ -103,6 +107,7 @@ export const login = async(req, res) => {
                 maxAge: 1 * 24 * 60 * 60 * 1000, // 1 day
                 httpOnly: true,
                 sameSite: "strict",
+                secure: process.env.NODE_ENV === "production",
             })
             .json({
                 success: true,
@@ -127,5 +132,54 @@ export const logout = async(__dirname, res) => {
         })
     } catch (error) {
         console.log(error)
+    }
+}
+
+export const updateProfile = async(req, res) => {
+    try {
+        const userId = req.id
+        const { firstName, lastName, occupation, bio, instagram, facebook, linkedin, github } = req.body;
+        const file = req.file;
+
+        const user = await User.findById(userId).select("-password")
+        let cloudResponse;
+        if (file) {
+            const fileUri = getDataUri(file);
+            cloudResponse = await cloudinary.uploader.upload(fileUri);
+            user.photoUrl = cloudResponse.secure_url;
+        }
+
+
+
+        if (!user) {
+            return res.status(404).json({
+                message: "User not found",
+                success: false
+            })
+        }
+
+        //Updating data
+        if (firstName) user.firstName = firstName
+        if (lastName) user.lastName = lastName;
+        if (occupation) user.occupation = occupation
+        if (instagram) user.instagram = instagram
+        if (facebook) user.facebook = facebook
+        if (linkedin) user.linkedin = linkedin
+        if (github) user.github = github
+        if (bio) user.bio = bio
+        if (file) user.photoUrl = cloudResponse.secure_url
+
+        await user.save();
+        return res.status(200).json({
+            message: "Profile updated successfully",
+            success: true,
+            user
+        })
+    } catch (error) {
+        console.log(error)
+        return res.status(500).json({
+            success: false,
+            message: "failed to upload the profile"
+        })
     }
 }
